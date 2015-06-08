@@ -19,7 +19,7 @@ uploadArchives {
     }
 }
 
-task install(dependsOn: uploadArchives)
+task build(dependsOn: uploadArchives)
 
 android {
     compileSdkVersion 22
