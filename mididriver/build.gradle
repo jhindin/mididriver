@@ -19,7 +19,7 @@ uploadArchives {
     }
 }
 
-task build(dependsOn: uploadArchives)
+uploadArchives.mustRunAfter build
 
 android {
     compileSdkVersion 22
