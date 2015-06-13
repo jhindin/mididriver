@@ -165,7 +165,7 @@ public class MidiDriver
             // Keep running until stopped
 
             running = true;
-            while (running) {
+            while (running || !queuedEvents.isEmpty()) {
                 // Write the midi events
 
                 synchronized (driver) {
