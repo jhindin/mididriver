@@ -24,8 +24,6 @@
 package org.billthefarmer.mididriver;
 
 import java.util.ArrayList;
-import java.util.List;
-
 import android.media.AudioFormat;
 import android.media.AudioManager;
 import android.media.AudioTrack;
@@ -42,7 +40,7 @@ public class MidiDriver
 
     private Handler handler;
     private AudioTrack audioTrack;
-    private List<byte[]> queuedEvents;
+    private ArrayList<byte[]> queuedEvents;
     private DriverThread driverThread;
     private OnMidiStartListener listener;
 
@@ -53,7 +51,7 @@ public class MidiDriver
     // Constructor
 
     public MidiDriver() {
-        queuedEvents = new ArrayList<byte[]>();
+        queuedEvents = new ArrayList<>();
         handler = new Handler(this);
 
     }
@@ -67,10 +65,10 @@ public class MidiDriver
 
     // Queue event
 
-    public void queueEvent(byte[] event) {
-        synchronized (this) {
-            queuedEvents.add(event);
-        }
+    public synchronized  void   queueEvent(byte[] event) {
+        if (queuedEvents.isEmpty())
+            notify();
+        queuedEvents.add(event);
     }
 
     // Stop
@@ -169,6 +167,10 @@ public class MidiDriver
                 // Write the midi events
 
                 synchronized (driver) {
+                    try {
+                        if (queuedEvents.isEmpty())
+                            driver.wait();
+                    } catch (InterruptedException ex) {}
                     for (byte[] queuedEvent : queuedEvents)
                         write(queuedEvent);
 
